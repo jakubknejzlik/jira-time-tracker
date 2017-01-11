@@ -1,0 +1,6 @@
+framework module Pods_Jira_time_tracker {
+  umbrella header "Pods-Jira time tracker-umbrella.h"
+
+  export *
+  module * { export * }
+}
