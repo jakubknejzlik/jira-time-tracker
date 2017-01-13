@@ -27,9 +27,9 @@ class JiraTask {
   
   class func mockedTask() -> JiraTask {
     let task = JiraTask()
-    task.URL = NSURL(string: "http://ololo.jira.lololo/ololo-123") as URL?
-    task.title = "Task title!"
-    task.shortID = "MB-4707"
+    task.URL = NSURL(string: "http://www.jira.com/") as URL?
+    task.title = "Task title"
+    task.shortID = "Task short ID"
     task.estimatedTime = 1000
     task.loggedTime = 100
     task.currentSessionLoggedTime = 10
