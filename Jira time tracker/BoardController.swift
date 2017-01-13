@@ -11,11 +11,21 @@ import SnapKit
 
 class BoardController : NSViewController {
   
+  static let kViewHeight = 400
+  static let kViewWidth = 600
+  
   var shortTaskInfo: JiraCurrentTaskInfoView!
   var logPanel: LogPanel!
   var tasksTableView = NSTableView()
   let tasksScrollView = NSScrollView()
   var jiraClient: JIRAClient?
+  
+  let progressIndicator: NSProgressIndicator = {
+    var pi = NSProgressIndicator(frame: NSRect(x: 0, y: BoardController.kViewHeight - 20, width: 20, height: 20))
+    pi.style = .spinningStyle
+    pi.appearance = NSAppearance(named: NSAppearanceNameAqua)
+    return pi
+  }()
   
   fileprivate var tasks: [JiraTask]?
   
@@ -27,9 +37,13 @@ class BoardController : NSViewController {
   }
   
   func refresh() {
-    self.tasks = [JiraTask]()
-    self.tasksTableView.reloadData()
+    progressIndicator.isHidden = false
+    progressIndicator.startAnimation(self)
+    tasks = [JiraTask]()
+    tasksTableView.reloadData()
     jiraClient?.getAllMyTasks(completion: { (tasks, error) in
+      self.progressIndicator.stopAnimation(self)
+      self.progressIndicator.isHidden = true
       if error != nil {
         return
       }
@@ -40,15 +54,15 @@ class BoardController : NSViewController {
   
   func setupViews() {
     view = CustomPopoverBackground()
-//    view.wantsLayer = true
-//    view.layer?.backgroundColor = CGColor.white
     view.snp.makeConstraints { make in
-      make.width.equalTo(600)
-      make.height.equalTo(400)
+      make.width.equalTo(BoardController.kViewWidth)
+      make.height.equalTo(BoardController.kViewHeight)
     }
+    progressIndicator.isHidden = true
     view.addSubview(shortTaskInfo)
     view.addSubview(logPanel)
     view.addSubview(tasksScrollView)
+    view.addSubview(progressIndicator)
     customizeShortTaskInfo()
     customizeLogPanel()
     customizeTasksScrollView()
