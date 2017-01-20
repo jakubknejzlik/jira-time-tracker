@@ -43,13 +43,13 @@ class LogPanel: NSView {
     toggleButton.title = "Start/Pause"
     toggleButton.target = self
     toggleButton.action = #selector(togglePressed)
-    toggleButton.bezelStyle = .roundRect
+    toggleButton.bezelStyle = .regularSquare
     //
     doneButton = NSButton()
     doneButton.title = "Log Work"
     doneButton.target = self
     doneButton.action = #selector(donePressed)
-    doneButton.bezelStyle = .roundRect
+    doneButton.bezelStyle = .regularSquare
     //
     addSubview(toggleButton)
     addSubview(doneButton)
@@ -76,7 +76,7 @@ class LogPanel: NSView {
   
   func customizeToggleButton() {
     toggleButton.snp.makeConstraints { make in
-      make.right.equalTo(loggedTimeLabel.snp.left)
+      make.right.equalTo(loggedTimeLabel.snp.left).inset(-20)
       make.centerY.equalTo(snp.centerY)
       make.width.equalTo(150)
     }
@@ -84,7 +84,7 @@ class LogPanel: NSView {
   
   func customizeDoneButton() {
     doneButton.snp.makeConstraints { make in
-      make.left.equalTo(loggedTimeLabel.snp.right)
+      make.left.equalTo(loggedTimeLabel.snp.right).offset(20)
       make.centerY.equalTo(snp.centerY)
       make.width.equalTo(150)
     }
@@ -106,7 +106,7 @@ class LogPanel: NSView {
       timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true, block: { timer in
         self.counter += 1
         let appDelegate = NSApp.delegate as! AppDelegate
-        appDelegate.updateTitle(with: self.task)
+        appDelegate.updateStatus(with: self.task)
       })
       timer?.fire()
     } else {

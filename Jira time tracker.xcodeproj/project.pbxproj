@@ -9,9 +9,9 @@
 /* Begin PBXBuildFile section */
 		037CEAC21DE31AE000467F4F /* TaskTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 037CEAC11DE31AE000467F4F /* TaskTableViewCell.swift */; };
 		038635061E2296D1002F9E59 /* TimeConverter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 038635051E2296D1002F9E59 /* TimeConverter.swift */; };
+		039576FD1E32769A0067AF75 /* mockedTasks.json in Resources */ = {isa = PBXBuildFile; fileRef = 039576FC1E32769A0067AF75 /* mockedTasks.json */; };
 		039EEFBA1E24E81F00DACAC5 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 039EEFB91E24E81F00DACAC5 /* LoginViewController.swift */; };
 		039EEFBC1E24E82800DACAC5 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 039EEFBB1E24E82800DACAC5 /* LoginView.swift */; };
-		039EEFBE1E251BA900DACAC5 /* CustomPopoverBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = 039EEFBD1E251BA900DACAC5 /* CustomPopoverBackground.swift */; };
 		039EEFC01E2521E400DACAC5 /* Colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 039EEFBF1E2521E400DACAC5 /* Colors.swift */; };
 		03EEE1921DDC778A00A686F2 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03EEE1911DDC778A00A686F2 /* AppDelegate.swift */; };
 		03EEE1941DDC778A00A686F2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 03EEE1931DDC778A00A686F2 /* Assets.xcassets */; };
@@ -29,9 +29,9 @@
 /* Begin PBXFileReference section */
 		037CEAC11DE31AE000467F4F /* TaskTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TaskTableViewCell.swift; sourceTree = "<group>"; };
 		038635051E2296D1002F9E59 /* TimeConverter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TimeConverter.swift; sourceTree = "<group>"; };
+		039576FC1E32769A0067AF75 /* mockedTasks.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = mockedTasks.json; sourceTree = "<group>"; };
 		039EEFB91E24E81F00DACAC5 /* LoginViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		039EEFBB1E24E82800DACAC5 /* LoginView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
-		039EEFBD1E251BA900DACAC5 /* CustomPopoverBackground.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomPopoverBackground.swift; sourceTree = "<group>"; };
 		039EEFBF1E2521E400DACAC5 /* Colors.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Colors.swift; sourceTree = "<group>"; };
 		03EEE18E1DDC778A00A686F2 /* Jira time tracker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Jira time tracker.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		03EEE1911DDC778A00A686F2 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -121,6 +121,7 @@
 			isa = PBXGroup;
 			children = (
 				03EEE1A51DDC980100A686F2 /* JiraTask.swift */,
+				039576FC1E32769A0067AF75 /* mockedTasks.json */,
 			);
 			name = JiraTask;
 			sourceTree = "<group>";
@@ -131,7 +132,6 @@
 				03EEE1A81DDC9A8000A686F2 /* JiraCurrentTaskInfoView.swift */,
 				03EEE1AA1DDCB9D500A686F2 /* LogPanel.swift */,
 				037CEAC11DE31AE000467F4F /* TaskTableViewCell.swift */,
-				039EEFBD1E251BA900DACAC5 /* CustomPopoverBackground.swift */,
 			);
 			name = "Custom views";
 			sourceTree = "<group>";
@@ -225,6 +225,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				03EEE1941DDC778A00A686F2 /* Assets.xcassets in Resources */,
+				039576FD1E32769A0067AF75 /* mockedTasks.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -293,7 +294,6 @@
 				039EEFBC1E24E82800DACAC5 /* LoginView.swift in Sources */,
 				03FBFF3F1E23EA3E0086E428 /* CredentialsStorage.swift in Sources */,
 				03F424A31E1B9A7700C578F2 /* JIRAClient.swift in Sources */,
-				039EEFBE1E251BA900DACAC5 /* CustomPopoverBackground.swift in Sources */,
 				03EEE1A61DDC980100A686F2 /* JiraTask.swift in Sources */,
 				03EEE1A11DDC7C4400A686F2 /* BoardController.swift in Sources */,
 				039EEFBA1E24E81F00DACAC5 /* LoginViewController.swift in Sources */,

@@ -11,23 +11,26 @@ import Foundation
 
 class JIRAClient {
   
-  var baseURL: URL
-  var session: URLSession
-  var credentialsStorage: CredentialsStorage
-  lazy var apiURL: URL = {
-    return self.baseURL.appendingPathComponent("/rest/api/2/")
-  }()
+  var baseURL: URL!
+  var session: URLSession!
+  var credentialsStorage: CredentialsStorage!
+  var apiURL: URL!
   
-  init?(credentialsStorage: CredentialsStorage) {
+  init(credentialsStorage: CredentialsStorage) {
+    session = URLSession(configuration: URLSessionConfiguration.default)
+  }
+  
+  func configure(with credentialsStorage: CredentialsStorage) {
     if credentialsStorage.getServerURL() == nil || credentialsStorage.getCurrentCredentials() == nil
-    || credentialsStorage.getServerURL() == "" || credentialsStorage.getCurrentCredentials() == "" {
+      || credentialsStorage.getServerURL() == "" || credentialsStorage.getCurrentCredentials() == "" {
       let appDelegate = NSApp.delegate as? AppDelegate
       appDelegate?.logout()
-      return nil
+      print("cannot configure JIRA client with: \(credentialsStorage.getServerURL()), \(credentialsStorage.getServerURL())")
+      return
     }
     self.baseURL = URL(string: credentialsStorage.getServerURL()!)!
+    self.apiURL = self.baseURL.appendingPathComponent("/rest/api/2/")
     self.credentialsStorage = credentialsStorage
-    session = URLSession(configuration: URLSessionConfiguration.default)
   }
   
   func authorize(request: inout URLRequest) {
@@ -51,6 +54,7 @@ class JIRAClient {
       if let error = error {
         print("error occured: \(error)")
         DispatchQueue.main.async {
+          NSAlert(error: error).runModal()
           completion(nil, error)
         }
         return
@@ -58,8 +62,7 @@ class JIRAClient {
       self.printResponce(response: data!)
       let json = try? JSONSerialization.jsonObject(with: data!, options: .allowFragments) as! Dictionary<String, Any>
       DispatchQueue.main.async {
-        completion(JiraTask.tasks(with: json?["issues"] as! [Dictionary<String, AnyObject>], baseURL: self.baseURL
-        ), nil)
+        completion(JiraTask.tasks(with: json?["issues"] as! [Dictionary<String, AnyObject>], baseURL: self.baseURL), nil)
       }
       }.resume()
   }
@@ -75,6 +78,7 @@ class JIRAClient {
     authorize(request: &urlRequest)
     session.dataTask(with: urlRequest) { data, response, error in
       if let error = error {
+        NSAlert(error: error).runModal()
         print("error occured: \(error)")
         return
       }

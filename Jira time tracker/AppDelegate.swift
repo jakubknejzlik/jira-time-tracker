@@ -16,25 +16,35 @@ enum AppState {
 
 class AppDelegate: NSObject, NSApplicationDelegate {
   
-  var appState: AppState?
-  var previousState: AppState?
   var credentialsStorage: CredentialsStorage?
   var jiraClient: JIRAClient?
   var statusItem = NSStatusBar.system().statusItem(withLength: 200)
-  var popover = NSPopover()
-
+  var currentTask: JiraTask?
+  var window: NSWindow?
+  
   func applicationDidFinishLaunching(_ aNotification: Notification) {
+    print("APP STATUS: applicationDidFinishLaunching(_ aNotification: Notification)")
+    
+    NSApp.activate(ignoringOtherApps: true)
     credentialsStorage = CredentialsStorage()
     jiraClient = JIRAClient(credentialsStorage: credentialsStorage!)
-    print("APP STATUS: applicationDidFinishLaunching(_ aNotification: Notification)")
+    if (credentialsStorage!.isLoggedIn()) {
+      jiraClient?.configure(with: credentialsStorage!)
+    }
     addStatusBarItem()
   }
   
   func addStatusBarItem() {
     statusItem.button?.title = "[No Active Tasks]"
     statusItem.button?.target = self
-    statusItem.button?.action = #selector(showPopover)
-    
+    statusItem.button?.action = #selector(showMenu)
+  }
+  
+  func openFullApp() {
+    if window == nil {
+      window = NSWindow(contentRect: NSRect(x: 500, y: 500, width: 200, height: 200), styleMask: [NSWindowStyleMask.titled, NSWindowStyleMask.closable], backing: NSBackingStoreType.buffered, defer: true)
+      window?.isReleasedWhenClosed = false
+    }
     var rootController: NSViewController? = nil
     if credentialsStorage!.isLoggedIn() {
       let boardController = BoardController()
@@ -43,22 +53,21 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     } else {
       rootController = LoginViewController()
     }
-    popover.contentViewController = rootController
+    window?.contentViewController = rootController
+    window?.setIsVisible(true)
+    window?.makeKeyAndOrderFront(self)
+    
   }
   
-  func updateTitle(with task: JiraTask) {
+  func updateStatus(with task: JiraTask) {
     statusItem.button?.title = "\(convertToHumanReadable(time: task.currentSessionLoggedTime!)) [\(task.shortID!)]"
   }
   
-  func showPopover() {
-//    if previousState == .inactive && appState == .active {
-//      return
-//    }
-    if popover.isShown {
-      popover.performClose(nil)
-    } else {
-      popover.show(relativeTo: (statusItem.button?.bounds)!, of: statusItem.button!, preferredEdge: .minY)
-    }
+  func showMenu() {
+    let mainMenu = NSMenu(title: "Jira Time Tracker")
+    let showMainWindowItem = NSMenuItem(title: "Show app", action: #selector(openFullApp), keyEquivalent: "")
+    mainMenu.addItem(showMainWindowItem)
+    statusItem.popUpMenu(mainMenu)
   }
   
 /// MARK: login
@@ -66,7 +75,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
   func logout() {
     credentialsStorage?.removeCredentials()
     credentialsStorage?.clearServerURL()
-    popover.contentViewController = LoginViewController()
+    window?.contentViewController = LoginViewController()
     statusItem.button?.title = "[No Active Tasks]"
   }
   
@@ -75,9 +84,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     let credentials = "\(username):\(password)".data(using: .utf8)?.base64EncodedString()
     credentialsStorage?.setCredentials(base64Encoded: credentials!)
     //
+    jiraClient?.configure(with: credentialsStorage!)
+    //
     let boardController = BoardController()
     boardController.jiraClient = jiraClient
-    popover.contentViewController = boardController
+    window?.contentViewController = boardController
   }
   
   /// MARK: 
@@ -108,8 +119,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
   
   func applicationDidBecomeActive(_ notification: Notification) {
     print("APP STATUS: applicationDidBecomeActive(_ notification: Notification)")
-    previousState = appState
-    appState = .active
   }
   
   func applicationWillResignActive(_ notification: Notification) {
@@ -118,8 +127,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
   
   func applicationDidResignActive(_ notification: Notification) {
     print("APP STATUS: applicationDidResignActive(_ notification: Notification)")
-    previousState = appState
-    appState = .inactive
   }
   
   func applicationWillUpdate(_ notification: Notification) {
