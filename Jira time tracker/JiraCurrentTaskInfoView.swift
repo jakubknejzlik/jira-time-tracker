@@ -10,10 +10,10 @@ import Cocoa
 
 class JiraCurrentTaskInfoView: NSView {
   
-  var titleView = NSTextView()
-  var shortIDView = NSTextView()
-  var loggedTimeView = NSTextView()
-  var estimatedTimeView = NSTextView()
+  var titleView = NSTextField()
+  var shortIDView = NSTextField()
+  var loggedTimeView = NSTextField()
+  var estimatedTimeView = NSTextField()
   var signoutButton = NSButton()
   var openInWebButton = NSButton()
   var refreshButton = NSButton()
@@ -45,10 +45,10 @@ class JiraCurrentTaskInfoView: NSView {
   
   func update(with task: JiraTask) {
     self.task = task
-    titleView.string = task.title
-    shortIDView.string = task.shortID
-    loggedTimeView.string = String(format: "Total logged: \(convertToHumanReadable(time: task.loggedTime!))")
-    estimatedTimeView.string = String(format: "Estimated: \(convertToHumanReadable(time: task.estimatedTime!))")
+    titleView.stringValue = task.title!
+    shortIDView.stringValue = task.shortID!
+    loggedTimeView.stringValue = String(format: "Total logged: \(convertToHumanReadable(time: task.loggedTime!))")
+    estimatedTimeView.stringValue = String(format: "Estimated: \(convertToHumanReadable(time: task.estimatedTime!))")
   }
   
   required init?(coder: NSCoder) {
@@ -64,8 +64,9 @@ class JiraCurrentTaskInfoView: NSView {
       make.centerX.equalTo(snp.centerX)
     }
     titleView.isEditable = false
-    titleView.font = NSFont.systemFont(ofSize: 14)
+    titleView.isBezeled = false
     titleView.backgroundColor = .clear
+    titleView.font = NSFont.systemFont(ofSize: 14)
     titleView.alignment = .center
   }
   
@@ -78,8 +79,9 @@ class JiraCurrentTaskInfoView: NSView {
       make.centerX.equalTo(snp.centerX)
     }
     shortIDView.isEditable = false
-    shortIDView.font = NSFont.systemFont(ofSize: 13)
+    shortIDView.isBezeled = false
     shortIDView.backgroundColor = .clear
+    shortIDView.font = NSFont.systemFont(ofSize: 13)
     shortIDView.alignment = .center
   }
   
@@ -92,8 +94,9 @@ class JiraCurrentTaskInfoView: NSView {
       make.left.equalTo(snp.left)
     }
     loggedTimeView.isEditable = false
-    loggedTimeView.font = NSFont.systemFont(ofSize: 10)
+    loggedTimeView.isBezeled = false
     loggedTimeView.backgroundColor = .clear
+    loggedTimeView.font = NSFont.systemFont(ofSize: 10)
   }
   
   func addEstimatedTime() {
@@ -104,8 +107,9 @@ class JiraCurrentTaskInfoView: NSView {
       make.left.equalTo(snp.left)
     }
     estimatedTimeView.isEditable = false
-    estimatedTimeView.font = NSFont.systemFont(ofSize: 10)
+    estimatedTimeView.isBezeled = false
     estimatedTimeView.backgroundColor = .clear
+    estimatedTimeView.font = NSFont.systemFont(ofSize: 10)
   }
   
   func addSignoutButton() {

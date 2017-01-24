@@ -24,6 +24,8 @@
 		03F424A31E1B9A7700C578F2 /* JIRAClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03F424A21E1B9A7700C578F2 /* JIRAClient.swift */; };
 		03FBFF3F1E23EA3E0086E428 /* CredentialsStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 03FBFF3E1E23EA3E0086E428 /* CredentialsStorage.swift */; };
 		3549608E30C7543738587D2C /* Pods_Jira_time_tracker.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AB720A24A61DF091029AD2B5 /* Pods_Jira_time_tracker.framework */; };
+		9D1D35641E32AEA600E1CA72 /* Worklog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D1D35631E32AEA600E1CA72 /* Worklog.swift */; };
+		9D1D35661E32B63100E1CA72 /* UIHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D1D35651E32B63100E1CA72 /* UIHelpers.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -34,7 +36,7 @@
 		039EEFBB1E24E82800DACAC5 /* LoginView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
 		039EEFBF1E2521E400DACAC5 /* Colors.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Colors.swift; sourceTree = "<group>"; };
 		03EEE18E1DDC778A00A686F2 /* Jira time tracker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Jira time tracker.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		03EEE1911DDC778A00A686F2 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		03EEE1911DDC778A00A686F2 /* AppDelegate.swift */ = {isa = PBXFileReference; indentWidth = 2; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; tabWidth = 2; };
 		03EEE1931DDC778A00A686F2 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		03EEE1981DDC778B00A686F2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		03EEE19E1DDC7AF600A686F2 /* main.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
@@ -42,11 +44,13 @@
 		03EEE1A21DDC8DA500A686F2 /* SnapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SnapKit.framework; path = Pods/../build/Debug/SnapKit/SnapKit.framework; sourceTree = "<group>"; };
 		03EEE1A51DDC980100A686F2 /* JiraTask.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JiraTask.swift; sourceTree = "<group>"; };
 		03EEE1A81DDC9A8000A686F2 /* JiraCurrentTaskInfoView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JiraCurrentTaskInfoView.swift; sourceTree = "<group>"; };
-		03EEE1AA1DDCB9D500A686F2 /* LogPanel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LogPanel.swift; sourceTree = "<group>"; };
+		03EEE1AA1DDCB9D500A686F2 /* LogPanel.swift */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 2; lastKnownFileType = sourcecode.swift; path = LogPanel.swift; sourceTree = "<group>"; tabWidth = 2; };
 		03F424A21E1B9A7700C578F2 /* JIRAClient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JIRAClient.swift; sourceTree = "<group>"; };
 		03FBFF3E1E23EA3E0086E428 /* CredentialsStorage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CredentialsStorage.swift; sourceTree = "<group>"; };
 		321D781A570E5D98AAD6D9D1 /* Pods-Jira time tracker.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Jira time tracker.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Jira time tracker/Pods-Jira time tracker.debug.xcconfig"; sourceTree = "<group>"; };
 		3F634599710EABA4737F148B /* Pods-Jira time tracker.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Jira time tracker.release.xcconfig"; path = "Pods/Target Support Files/Pods-Jira time tracker/Pods-Jira time tracker.release.xcconfig"; sourceTree = "<group>"; };
+		9D1D35631E32AEA600E1CA72 /* Worklog.swift */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 2; lastKnownFileType = sourcecode.swift; name = Worklog.swift; path = Worklog/Worklog.swift; sourceTree = "<group>"; tabWidth = 2; };
+		9D1D35651E32B63100E1CA72 /* UIHelpers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIHelpers.swift; sourceTree = "<group>"; };
 		AB720A24A61DF091029AD2B5 /* Pods_Jira_time_tracker.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Jira_time_tracker.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -69,6 +73,7 @@
 				038635051E2296D1002F9E59 /* TimeConverter.swift */,
 				03FBFF3E1E23EA3E0086E428 /* CredentialsStorage.swift */,
 				039EEFBF1E2521E400DACAC5 /* Colors.swift */,
+				9D1D35651E32B63100E1CA72 /* UIHelpers.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -113,6 +118,7 @@
 				03EEE1981DDC778B00A686F2 /* Info.plist */,
 				03EEE19E1DDC7AF600A686F2 /* main.swift */,
 				03EEE1A01DDC7C4400A686F2 /* BoardController.swift */,
+				9D1D35631E32AEA600E1CA72 /* Worklog.swift */,
 			);
 			path = "Jira time tracker";
 			sourceTree = "<group>";
@@ -289,6 +295,8 @@
 				03EEE1A91DDC9A8000A686F2 /* JiraCurrentTaskInfoView.swift in Sources */,
 				039EEFC01E2521E400DACAC5 /* Colors.swift in Sources */,
 				038635061E2296D1002F9E59 /* TimeConverter.swift in Sources */,
+				9D1D35641E32AEA600E1CA72 /* Worklog.swift in Sources */,
+				9D1D35661E32B63100E1CA72 /* UIHelpers.swift in Sources */,
 				037CEAC21DE31AE000467F4F /* TaskTableViewCell.swift in Sources */,
 				03EEE1AB1DDCB9D500A686F2 /* LogPanel.swift in Sources */,
 				039EEFBC1E24E82800DACAC5 /* LoginView.swift in Sources */,
@@ -405,6 +413,7 @@
 				);
 				INFOPLIST_FILE = "Jira time tracker/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.agronomis.Jira-time-tracker";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 3.0;
@@ -423,6 +432,7 @@
 				);
 				INFOPLIST_FILE = "Jira time tracker/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.agronomis.Jira-time-tracker";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 3.0;

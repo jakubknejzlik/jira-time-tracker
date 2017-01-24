@@ -32,9 +32,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
       jiraClient?.configure(with: credentialsStorage!)
     }
     addStatusBarItem()
+    openFullApp()
   }
   
   func addStatusBarItem() {
+    statusItem.button?.image = NSImage(named: "AppIcon")
+    statusItem.button?.imageScaling = .scaleProportionallyDown
+    statusItem.button?.imagePosition = .imageLeft
     statusItem.button?.title = "[No Active Tasks]"
     statusItem.button?.target = self
     statusItem.button?.action = #selector(showMenu)
@@ -53,7 +57,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     } else {
       rootController = LoginViewController()
     }
-    window?.contentViewController = rootController
+    if let contentController = window?.contentViewController {
+      if contentController.className != rootController?.className {
+        window?.contentViewController = rootController
+      }
+    } else {
+      window?.contentViewController = rootController
+    }
     window?.setIsVisible(true)
     window?.makeKeyAndOrderFront(self)
     
@@ -66,8 +76,32 @@ class AppDelegate: NSObject, NSApplicationDelegate {
   func showMenu() {
     let mainMenu = NSMenu(title: "Jira Time Tracker")
     let showMainWindowItem = NSMenuItem(title: "Show app", action: #selector(openFullApp), keyEquivalent: "")
+    let resumePauseItem = NSMenuItem(title: "Resume / Pause", action: #selector(onResumePauseClicked), keyEquivalent: "")
+    let endItem = NSMenuItem(title: "Log work", action: #selector(onEndWorklogClicked), keyEquivalent: "")
     mainMenu.addItem(showMainWindowItem)
+    mainMenu.addItem(resumePauseItem)
+    mainMenu.addItem(endItem)
     statusItem.popUpMenu(mainMenu)
+  }
+  
+/// MARK: Resume / pause from menu logic
+  
+  func onResumePauseClicked() {
+    guard let _ = Worklog.shared.currentActiveTask else {
+      return
+    }
+    if (Worklog.shared.isTimerValid()) {
+      Worklog.shared.pauseWorklog()
+    } else {
+      Worklog.shared.startWorklog()
+    }
+  }
+  
+  func onEndWorklogClicked() {
+    guard let _ = Worklog.shared.currentActiveTask else {
+      return
+    }
+    Worklog.shared.stopWorklog()
   }
   
 /// MARK: login
@@ -86,6 +120,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     //
     jiraClient?.configure(with: credentialsStorage!)
     //
+    
     let boardController = BoardController()
     boardController.jiraClient = jiraClient
     window?.contentViewController = boardController
@@ -127,14 +162,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
   
   func applicationDidResignActive(_ notification: Notification) {
     print("APP STATUS: applicationDidResignActive(_ notification: Notification)")
-  }
-  
-  func applicationWillUpdate(_ notification: Notification) {
-//    print("APP STATUS: applicationWillUpdate(_ notification: Notification)")
-  }
-  
-  func applicationDidUpdate(_ notification: Notification) {
-//    print("APP STATUS: applicationDidUpdate(_ notification: Notification)")
   }
   
   func applicationWillTerminate(_ notification: Notification) {

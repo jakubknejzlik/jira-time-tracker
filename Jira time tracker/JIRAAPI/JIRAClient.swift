@@ -44,6 +44,10 @@ class JIRAClient {
   /// MARK - requests
   
   func getAllMyTasks(completion: @escaping ([JiraTask]?, Error?) -> Void) {
+    if (credentialsStorage.isInDemoEnvironment()) {
+      completion(JiraTask.mockedTasks(), nil)
+      return
+    }
     let searchURL = apiURL.appendingPathComponent("search")
     var urlComponents = URLComponents(string: searchURL.absoluteString)
     urlComponents?.queryItems = [URLQueryItem(name: "jql", value: "assignee = currentUser() AND resolution = Unresolved ORDER BY updatedDate DESC")]
@@ -59,15 +63,37 @@ class JIRAClient {
         }
         return
       }
-      self.printResponce(response: data!)
-      let json = try? JSONSerialization.jsonObject(with: data!, options: .allowFragments) as! Dictionary<String, Any>
+      guard let data = data else {
+        print("No data is received during GET [All my tasks]")
+        DispatchQueue.main.async {
+          let err = NSError(domain: "com", code: 4, userInfo: [NSLocalizedDescriptionKey: "`GET` failed"])
+          NSAlert(error: err).runModal()
+          completion(nil, err)
+        }
+        return
+      }
+      self.printResponce(response: data)
+      let json = try? JSONSerialization.jsonObject(with: data, options: .allowFragments) as! Dictionary<String, Any>
+      if json == nil {
+        print("Invalid json")
+        DispatchQueue.main.async {
+          let err = NSError(domain: "com", code: 5, userInfo: [NSLocalizedDescriptionKey: "Invalid json"])
+          NSAlert(error: err).runModal()
+          completion(nil, err)
+        }
+        return
+      }
       DispatchQueue.main.async {
         completion(JiraTask.tasks(with: json?["issues"] as! [Dictionary<String, AnyObject>], baseURL: self.baseURL), nil)
       }
       }.resume()
   }
   
-  func logWork(_ time: TimeInterval, task: JiraTask, completion: () -> Void) {
+  func logWork(_ time: TimeInterval, task: JiraTask, completion: @escaping () -> Void) {
+    if (credentialsStorage.isInDemoEnvironment()) {
+      completion()
+      return
+    }
     let worklogURL = apiURL.appendingPathComponent("issue/\(task.shortID!)/worklog")
     var urlRequest = URLRequest(url: worklogURL)
     urlRequest.httpMethod = "POST"
@@ -83,6 +109,9 @@ class JIRAClient {
         return
       }
       self.printResponce(response: data!)
+      DispatchQueue.main.async {
+        completion()
+      }
     }.resume()
   }
   
