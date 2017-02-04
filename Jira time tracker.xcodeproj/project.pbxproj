@@ -26,6 +26,8 @@
 		3549608E30C7543738587D2C /* Pods_Jira_time_tracker.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AB720A24A61DF091029AD2B5 /* Pods_Jira_time_tracker.framework */; };
 		9D1D35641E32AEA600E1CA72 /* Worklog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D1D35631E32AEA600E1CA72 /* Worklog.swift */; };
 		9D1D35661E32B63100E1CA72 /* UIHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D1D35651E32B63100E1CA72 /* UIHelpers.swift */; };
+		9D9D26B61E43E19E00B9AB40 /* Fabric.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9D9D26B41E43E19E00B9AB40 /* Fabric.framework */; };
+		9D9D26B71E43E19E00B9AB40 /* Crashlytics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9D9D26B51E43E19E00B9AB40 /* Crashlytics.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -51,6 +53,9 @@
 		3F634599710EABA4737F148B /* Pods-Jira time tracker.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Jira time tracker.release.xcconfig"; path = "Pods/Target Support Files/Pods-Jira time tracker/Pods-Jira time tracker.release.xcconfig"; sourceTree = "<group>"; };
 		9D1D35631E32AEA600E1CA72 /* Worklog.swift */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 2; lastKnownFileType = sourcecode.swift; name = Worklog.swift; path = Worklog/Worklog.swift; sourceTree = "<group>"; tabWidth = 2; };
 		9D1D35651E32B63100E1CA72 /* UIHelpers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIHelpers.swift; sourceTree = "<group>"; };
+		9D9D26B41E43E19E00B9AB40 /* Fabric.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Fabric.framework; sourceTree = "<group>"; };
+		9D9D26B51E43E19E00B9AB40 /* Crashlytics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Crashlytics.framework; sourceTree = "<group>"; };
+		9DF826391E381A900059AE71 /* Jira time tracker.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Jira time tracker.entitlements"; sourceTree = "<group>"; };
 		AB720A24A61DF091029AD2B5 /* Pods_Jira_time_tracker.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Jira_time_tracker.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -61,6 +66,8 @@
 			files = (
 				03EEE1A31DDC8DA500A686F2 /* SnapKit.framework in Frameworks */,
 				3549608E30C7543738587D2C /* Pods_Jira_time_tracker.framework in Frameworks */,
+				9D9D26B71E43E19E00B9AB40 /* Crashlytics.framework in Frameworks */,
+				9D9D26B61E43E19E00B9AB40 /* Fabric.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -90,6 +97,8 @@
 		03EEE1851DDC778A00A686F2 = {
 			isa = PBXGroup;
 			children = (
+				9D9D26B41E43E19E00B9AB40 /* Fabric.framework */,
+				9D9D26B51E43E19E00B9AB40 /* Crashlytics.framework */,
 				03EEE1901DDC778A00A686F2 /* Jira time tracker */,
 				03EEE18F1DDC778A00A686F2 /* Products */,
 				29DBA77596655DE47FDC5D74 /* Pods */,
@@ -108,6 +117,7 @@
 		03EEE1901DDC778A00A686F2 /* Jira time tracker */ = {
 			isa = PBXGroup;
 			children = (
+				9DF826391E381A900059AE71 /* Jira time tracker.entitlements */,
 				039EEFB81E24E80A00DACAC5 /* Login */,
 				038635041E2296C6002F9E59 /* Helpers */,
 				03F424A11E1B99D500C578F2 /* JIRAAPI */,
@@ -181,6 +191,7 @@
 				03EEE18C1DDC778A00A686F2 /* Resources */,
 				F2AA0A8B380FA6F59B94246A /* [CP] Embed Pods Frameworks */,
 				A762EC0661EDBF3C0C109C31 /* [CP] Copy Pods Resources */,
+				9D9D26B31E43E17700B9AB40 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -204,6 +215,11 @@
 					03EEE18D1DDC778A00A686F2 = {
 						CreatedOnToolsVersion = 8.2;
 						ProvisioningStyle = Automatic;
+						SystemCapabilities = {
+							com.apple.Sandbox = {
+								enabled = 1;
+							};
+						};
 					};
 				};
 			};
@@ -252,6 +268,19 @@
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
+		};
+		9D9D26B31E43E17700B9AB40 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "./Fabric.framework/run a692157718d46bf66efe4e79266bf9f544ffed66 8ce92bba28fce371f40359ad0bd6bb6138c43493596dae37c4a3ef115e6c5096";
 		};
 		A762EC0661EDBF3C0C109C31 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -406,15 +435,18 @@
 			baseConfigurationReference = 321D781A570E5D98AAD6D9D1 /* Pods-Jira time tracker.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = "Jira time tracker/Jira time tracker.entitlements";
+				CODE_SIGN_IDENTITY = "-";
 				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/build/Debug/SnapKit",
+					"$(PROJECT_DIR)",
 				);
 				INFOPLIST_FILE = "Jira time tracker/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.agronomis.Jira-time-tracker";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.kudinovde.jira-time-tracker";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 3.0;
 			};
@@ -425,15 +457,18 @@
 			baseConfigurationReference = 3F634599710EABA4737F148B /* Pods-Jira time tracker.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = "Jira time tracker/Jira time tracker.entitlements";
+				CODE_SIGN_IDENTITY = "-";
 				COMBINE_HIDPI_IMAGES = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/build/Debug/SnapKit",
+					"$(PROJECT_DIR)",
 				);
 				INFOPLIST_FILE = "Jira time tracker/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
-				PRODUCT_BUNDLE_IDENTIFIER = "com.agronomis.Jira-time-tracker";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.kudinovde.jira-time-tracker";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 3.0;
 			};

@@ -7,6 +7,8 @@
 //
 
 import Cocoa
+import Fabric
+import Crashlytics
 
 
 enum AppState {
@@ -24,12 +26,14 @@ class AppDelegate: NSObject, NSApplicationDelegate {
   
   func applicationDidFinishLaunching(_ aNotification: Notification) {
     print("APP STATUS: applicationDidFinishLaunching(_ aNotification: Notification)")
+    UserDefaults.standard.register(defaults: ["NSApplicationCrashOnExceptions": true])
+    Fabric.with([Crashlytics.self])
     
     NSApp.activate(ignoringOtherApps: true)
     credentialsStorage = CredentialsStorage()
     jiraClient = JIRAClient(credentialsStorage: credentialsStorage!)
     if (credentialsStorage!.isLoggedIn()) {
-      jiraClient?.configure(with: credentialsStorage!)
+      try? jiraClient?.configure(with: credentialsStorage!)
     }
     addStatusBarItem()
     openFullApp()
@@ -109,6 +113,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
   func logout() {
     credentialsStorage?.removeCredentials()
     credentialsStorage?.clearServerURL()
+    UserDefaults.resetStandardUserDefaults()
     window?.contentViewController = LoginViewController()
     statusItem.button?.title = "[No Active Tasks]"
   }
@@ -118,9 +123,14 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     let credentials = "\(username):\(password)".data(using: .utf8)?.base64EncodedString()
     credentialsStorage?.setCredentials(base64Encoded: credentials!)
     //
-    jiraClient?.configure(with: credentialsStorage!)
+    do {
+      try jiraClient?.configure(with: credentialsStorage!)
+    } catch  {
+      let appDelegate = NSApp.delegate as? AppDelegate
+      appDelegate?.logout()
+      return
+    }
     //
-    
     let boardController = BoardController()
     boardController.jiraClient = jiraClient
     window?.contentViewController = boardController

@@ -18,7 +18,7 @@ class LoginViewController: NSViewController {
   func setupViews() {
     view = LoginView(frame: .zero, delegate: self)
     view.snp.makeConstraints { make in
-      make.width.equalTo(270)
+      make.width.equalTo(300)
       make.height.equalTo(170)
     }
   }

@@ -9,6 +9,10 @@
 import Cocoa
 import Foundation
 
+enum JiraClientError : Error {
+  case cannotConfigure
+}
+
 class JIRAClient {
   
   var baseURL: URL!
@@ -20,15 +24,17 @@ class JIRAClient {
     session = URLSession(configuration: URLSessionConfiguration.default)
   }
   
-  func configure(with credentialsStorage: CredentialsStorage) {
-    if credentialsStorage.getServerURL() == nil || credentialsStorage.getCurrentCredentials() == nil
-      || credentialsStorage.getServerURL() == "" || credentialsStorage.getCurrentCredentials() == "" {
-      let appDelegate = NSApp.delegate as? AppDelegate
-      appDelegate?.logout()
-      print("cannot configure JIRA client with: \(credentialsStorage.getServerURL()), \(credentialsStorage.getServerURL())")
-      return
+  func configure(with credentialsStorage: CredentialsStorage) throws {
+    guard
+      let stringURL = credentialsStorage.getServerURL(),
+      let serverURL = URL(string: stringURL),
+      let credentials = credentialsStorage.getCurrentCredentials(),
+      credentials != ""
+    else {
+      print("cannot configure JIRA client with: \(credentialsStorage.getServerURL()), \(credentialsStorage.getCurrentCredentials())")
+      throw JiraClientError.cannotConfigure
     }
-    self.baseURL = URL(string: credentialsStorage.getServerURL()!)!
+    self.baseURL = serverURL
     self.apiURL = self.baseURL.appendingPathComponent("/rest/api/2/")
     self.credentialsStorage = credentialsStorage
   }
