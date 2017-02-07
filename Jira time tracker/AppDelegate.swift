@@ -73,6 +73,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
   }
   
+  func terminate() {
+    NSApp.terminate(self)
+  }
+  
   func updateStatus(with task: JiraTask) {
     statusItem.button?.title = "\(convertToHumanReadable(time: task.currentSessionLoggedTime!)) [\(task.shortID!)]"
   }
@@ -82,9 +86,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     let showMainWindowItem = NSMenuItem(title: "Show app", action: #selector(openFullApp), keyEquivalent: "")
     let resumePauseItem = NSMenuItem(title: "Resume / Pause", action: #selector(onResumePauseClicked), keyEquivalent: "")
     let endItem = NSMenuItem(title: "Log work", action: #selector(onEndWorklogClicked), keyEquivalent: "")
+    let quitItem = NSMenuItem(title: "Quit Time Tracker", action: #selector(terminate), keyEquivalent: "q")
     mainMenu.addItem(showMainWindowItem)
     mainMenu.addItem(resumePauseItem)
     mainMenu.addItem(endItem)
+    mainMenu.addItem(quitItem)
     statusItem.popUpMenu(mainMenu)
   }
   
