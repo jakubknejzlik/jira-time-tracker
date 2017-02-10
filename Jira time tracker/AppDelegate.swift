@@ -36,7 +36,22 @@ class AppDelegate: NSObject, NSApplicationDelegate {
       try? jiraClient?.configure(with: credentialsStorage!)
     }
     addStatusBarItem()
+    addMainMenu()
     openFullApp()
+  }
+  
+  func addMainMenu() {
+    let menuBar = NSMenu(title: "Jira time tracker")
+    let menuBarItem = NSMenuItem()
+    //
+    let appMenu = NSMenu(title: "Smth")
+    let quitItem = NSMenuItem(title: "Quit", action: #selector(terminate), keyEquivalent: "q")
+    //
+    menuBar.addItem(menuBarItem)
+    NSApp.mainMenu = menuBar
+    //
+    appMenu.addItem(quitItem)
+    menuBarItem.submenu = appMenu
   }
   
   func addStatusBarItem() {
