@@ -143,7 +143,7 @@ extension BoardController: NSTableViewDataSource, NSTableViewDelegate {
     let task = (tasks?[row])!
     if (Worklog.shared.isAnyTaskInProgress()) {
       print("Some task is already in progress. Selected new task.")
-      if (!showCancelOKAlert(withTitle: "Some task is already in progress. Progress for current task will be cancelled")) {
+      if (!Helper.showCancelOKAlert(withTitle: "Some task is already in progress. Progress for current task will be cancelled")) {
         return false
       }
     }
@@ -168,7 +168,7 @@ extension BoardController: LogPanelDelegate {
   func logDidEnd(panel: LogPanel) {
     let task = panel.task!
     jiraClient?.logWork(task.currentSessionLoggedTime!, task: task) {
-      showOKAlert(withTitle: "Successfully logged")
+      Helper.showOKAlert(withTitle: "Successfully logged")
       self.logPanel.counter = 0
       task.currentSessionLoggedTime = 0
       let appDelegate = NSApp.delegate as! AppDelegate

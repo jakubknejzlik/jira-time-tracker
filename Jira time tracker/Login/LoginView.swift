@@ -14,6 +14,7 @@ class LoginView: NSView {
   let usernameField = NSTextField()
   let passwordField = NSSecureTextField()
   let loginButton = NSButton()
+  let askQuestionButton = NSButton()
   
   weak var delegate: LoginViewController?
   
@@ -26,10 +27,12 @@ class LoginView: NSView {
     addSubview(usernameField)
     addSubview(passwordField)
     addSubview(loginButton)
+    addSubview(askQuestionButton)
     adjustServerURLField()
     adjustUsernameField()
     adjustPasswordField()
     adjustLoginButton()
+    adjustAskQuestionButton()
   }
   
   func adjustServerURLField() {
@@ -76,6 +79,19 @@ class LoginView: NSView {
     loginButton.snp.makeConstraints { make in
       make.top.equalTo(passwordField.snp.bottom).offset(20)
       make.left.equalTo(snp.left).inset(20)
+      make.width.equalTo(askQuestionButton.snp.width)
+      make.height.equalTo(20)
+    }
+  }
+  
+  func adjustAskQuestionButton() {
+    askQuestionButton.title = "Help"
+    askQuestionButton.target = self
+    askQuestionButton.action = #selector(askAQuestion)
+    askQuestionButton.bezelStyle = .regularSquare
+    askQuestionButton.snp.makeConstraints { make in
+      make.top.equalTo(passwordField.snp.bottom).offset(20)
+      make.left.equalTo(loginButton.snp.right).offset(20)
       make.right.equalTo(snp.right).inset(20)
       make.height.equalTo(20)
     }
@@ -90,6 +106,10 @@ class LoginView: NSView {
       return
     }
     delegate?.loginButtonTapped(server: server, username: username, password: password)
+  }
+  
+  func askAQuestion() {
+    Helper.askAQuestion()
   }
   
   required init?(coder: NSCoder) {
