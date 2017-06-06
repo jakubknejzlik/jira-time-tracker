@@ -9,25 +9,34 @@
 import Cocoa
 import Foundation
 
+enum JiraClientError : Error {
+  case cannotConfigure
+}
+
 class JIRAClient {
   
-  var baseURL: URL
-  var session: URLSession
-  var credentialsStorage: CredentialsStorage
-  lazy var apiURL: URL = {
-    return self.baseURL.appendingPathComponent("/rest/api/2/")
-  }()
+  var baseURL: URL!
+  var session: URLSession!
+  var credentialsStorage: CredentialsStorage!
+  var apiURL: URL!
   
-  init?(credentialsStorage: CredentialsStorage) {
-    if credentialsStorage.getServerURL() == nil || credentialsStorage.getCurrentCredentials() == nil
-    || credentialsStorage.getServerURL() == "" || credentialsStorage.getCurrentCredentials() == "" {
-      let appDelegate = NSApp.delegate as? AppDelegate
-      appDelegate?.logout()
-      return nil
-    }
-    self.baseURL = URL(string: credentialsStorage.getServerURL()!)!
-    self.credentialsStorage = credentialsStorage
+  init(credentialsStorage: CredentialsStorage) {
     session = URLSession(configuration: URLSessionConfiguration.default)
+  }
+  
+  func configure(with credentialsStorage: CredentialsStorage) throws {
+    guard
+      let stringURL = credentialsStorage.getServerURL(),
+      let serverURL = URL(string: stringURL),
+      let credentials = credentialsStorage.getCurrentCredentials(),
+      credentials != ""
+    else {
+      print("cannot configure JIRA client with: \(credentialsStorage.getServerURL()), \(credentialsStorage.getCurrentCredentials())")
+      throw JiraClientError.cannotConfigure
+    }
+    self.baseURL = serverURL
+    self.apiURL = self.baseURL.appendingPathComponent("/rest/api/2/")
+    self.credentialsStorage = credentialsStorage
   }
   
   func authorize(request: inout URLRequest) {
@@ -41,6 +50,10 @@ class JIRAClient {
   /// MARK - requests
   
   func getAllMyTasks(completion: @escaping ([JiraTask]?, Error?) -> Void) {
+    if (credentialsStorage.isInDemoEnvironment()) {
+      completion(JiraTask.mockedTasks(), nil)
+      return
+    }
     let searchURL = apiURL.appendingPathComponent("search")
     var urlComponents = URLComponents(string: searchURL.absoluteString)
     urlComponents?.queryItems = [URLQueryItem(name: "jql", value: "assignee = currentUser() AND resolution = Unresolved ORDER BY updatedDate DESC")]
@@ -51,20 +64,42 @@ class JIRAClient {
       if let error = error {
         print("error occured: \(error)")
         DispatchQueue.main.async {
+          NSAlert(error: error).runModal()
           completion(nil, error)
         }
         return
       }
-      self.printResponce(response: data!)
-      let json = try? JSONSerialization.jsonObject(with: data!, options: .allowFragments) as! Dictionary<String, Any>
+      guard let data = data else {
+        print("No data is received during GET [All my tasks]")
+        DispatchQueue.main.async {
+          let err = NSError(domain: "com", code: 4, userInfo: [NSLocalizedDescriptionKey: "`GET` failed"])
+          NSAlert(error: err).runModal()
+          completion(nil, err)
+        }
+        return
+      }
+      self.printResponce(response: data)
+      let json = try? JSONSerialization.jsonObject(with: data, options: .allowFragments) as! Dictionary<String, Any>
+      if json == nil {
+        print("Invalid json")
+        DispatchQueue.main.async {
+          let err = NSError(domain: "com", code: 5, userInfo: [NSLocalizedDescriptionKey: "Invalid json"])
+          NSAlert(error: err).runModal()
+          completion(nil, err)
+        }
+        return
+      }
       DispatchQueue.main.async {
-        completion(JiraTask.tasks(with: json?["issues"] as! [Dictionary<String, AnyObject>], baseURL: self.baseURL
-        ), nil)
+        completion(JiraTask.tasks(with: json?["issues"] as! [Dictionary<String, AnyObject>], baseURL: self.baseURL), nil)
       }
       }.resume()
   }
   
-  func logWork(_ time: TimeInterval, task: JiraTask, completion: () -> Void) {
+  func logWork(_ time: TimeInterval, task: JiraTask, completion: @escaping () -> Void) {
+    if (credentialsStorage.isInDemoEnvironment()) {
+      completion()
+      return
+    }
     let worklogURL = apiURL.appendingPathComponent("issue/\(task.shortID!)/worklog")
     var urlRequest = URLRequest(url: worklogURL)
     urlRequest.httpMethod = "POST"
@@ -75,10 +110,14 @@ class JIRAClient {
     authorize(request: &urlRequest)
     session.dataTask(with: urlRequest) { data, response, error in
       if let error = error {
+        NSAlert(error: error).runModal()
         print("error occured: \(error)")
         return
       }
       self.printResponce(response: data!)
+      DispatchQueue.main.async {
+        completion()
+      }
     }.resume()
   }
   

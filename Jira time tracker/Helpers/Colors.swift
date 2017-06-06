@@ -30,6 +30,10 @@ class Colors {
     return UIColorFromRGB(rgbValue: 0x91BE11)
   }
   
+  class func whiteColor() -> NSColor {
+    return NSColor.white
+  }
+  
   class func UIColorFromRGB(rgbValue: UInt) -> NSColor {
     return NSColor(
       red: CGFloat((rgbValue & 0xFF0000) >> 16) / 255.0,

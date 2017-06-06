@@ -28,13 +28,21 @@ class JiraTask {
   class func mockedTask() -> JiraTask {
     let task = JiraTask()
     task.URL = NSURL(string: "http://www.jira.com/") as URL?
-    task.title = "Task title"
-    task.shortID = "Task short ID"
-    task.estimatedTime = 1000
-    task.loggedTime = 100
-    task.currentSessionLoggedTime = 10
+    task.title = "..."
+    task.shortID = "..."
+    task.estimatedTime = 0
+    task.loggedTime = 0
+    task.currentSessionLoggedTime = 0
     task.status = .inProgress
     return task
+  }
+  
+  class func mockedTasks() -> [JiraTask] {
+    let path = Bundle.main.path(forResource: "mockedTasks", ofType: "json")
+    let content = FileManager.default.contents(atPath: path!)
+    let json = try? JSONSerialization.jsonObject(with: content!, options: .allowFragments) as! Dictionary<String, Any>
+    let tasksJson = json?["issues"] as! [Dictionary<String, AnyObject>]
+    return tasks(with: tasksJson, baseURL: NSURL(string: "http://jira.com") as! URL)
   }
   
   class func task(with dict: Dictionary<String, AnyObject>, baseURL: URL) -> JiraTask {

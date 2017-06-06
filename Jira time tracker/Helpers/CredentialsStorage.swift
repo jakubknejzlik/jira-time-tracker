@@ -9,14 +9,24 @@
 import Foundation
 import Security
 
-
 class CredentialsStorage : UserDefaults {
   
-  let privateKey = "<YOUR PRIVATE RSA KEY>"
-  let publicKey = "<YOUR PUBLIC RSA KEY>"
+  let privateKey = "MIIBOgIBAAJBAKnklsz0e7lHNwKDv5sq/EbyXgM2L75Z37hoPn675wVLKHLzEJDLBDJD67M8pCJwNImRwrwdSd7YE7QVrfPCGK8CAwEAAQJAA5pzkFlHHoDiK817jOD2hNKzJ8JIdPMXCaQ8XxfBKJ2Mi+SuCDNknsRm3MgT/TWhvfg+kf1ZBCUIZkCBHia8kQIhAO2/+tWv1tYAzjv74Eld+M0I0xBD3Suxo4W8UT2Tv5YNAiEAtu8nBgsNE6SQRoUXs00xPlJV/NUWrY5wfqEKLBxC1qsCICpOdUY9Kg+eyRQnd/vWOwXRQi2sxdiWnbCYmCRK/FapAiAZkYOazKCfRjkEIkYVwYxIcamjFQV+bJI8oLWTRL/y0QIhAN/ba7r3tPDJMizHWYxWO0XY/hp/pAKzaXUxm+3oB6wD"
+  let publicKey = "MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAKnklsz0e7lHNwKDv5sq/EbyXgM2L75Z37hoPn675wVLKHLzEJDLBDJD67M8pCJwNImRwrwdSd7YE7QVrfPCGK8CAwEAAQ=="
   
   let kCurrentCredentialsKey = "kCurrentCredentialsKey"
   let kServerURLKey = "kServerURLKey"
+  
+  func isInDemoEnvironment() -> Bool {
+    guard
+      let credentials = getCurrentCredentials(),
+      let serverURL = getServerURL()
+    else {
+      print("No credentials found")
+      return false
+    }
+    return credentials == "ZGVtbzpkZW1v" && serverURL == "https://demo.jira.com"
+  }
   
   /// MARK: Credentials
   
@@ -41,6 +51,13 @@ class CredentialsStorage : UserDefaults {
   }
   
   func isLoggedIn() -> Bool {
+    guard
+      let serverString = getServerURL(),
+      let _ = URL(string: serverString)
+    else {
+      print("Server url is invalid. Logout...")
+      return false
+    }
     return getCurrentCredentials() != nil
   }
   

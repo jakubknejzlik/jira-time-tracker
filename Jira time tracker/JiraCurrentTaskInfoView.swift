@@ -10,10 +10,10 @@ import Cocoa
 
 class JiraCurrentTaskInfoView: NSView {
   
-  var titleView = NSTextView()
-  var shortIDView = NSTextView()
-  var loggedTimeView = NSTextView()
-  var estimatedTimeView = NSTextView()
+  var titleView = NSTextField()
+  var shortIDView = NSTextField()
+  var loggedTimeView = NSTextField()
+  var estimatedTimeView = NSTextField()
   var signoutButton = NSButton()
   var openInWebButton = NSButton()
   var refreshButton = NSButton()
@@ -45,10 +45,10 @@ class JiraCurrentTaskInfoView: NSView {
   
   func update(with task: JiraTask) {
     self.task = task
-    titleView.string = task.title
-    shortIDView.string = task.shortID
-    loggedTimeView.string = String(format: "Total logged: \(convertToHumanReadable(time: task.loggedTime!))")
-    estimatedTimeView.string = String(format: "Estimated: \(convertToHumanReadable(time: task.estimatedTime!))")
+    titleView.stringValue = task.title!
+    shortIDView.stringValue = task.shortID!
+    loggedTimeView.stringValue = String(format: "Total logged: \(convertToHumanReadable(time: task.loggedTime!))")
+    estimatedTimeView.stringValue = String(format: "Estimated: \(convertToHumanReadable(time: task.estimatedTime!))")
   }
   
   required init?(coder: NSCoder) {
@@ -63,8 +63,10 @@ class JiraCurrentTaskInfoView: NSView {
       make.bottom.equalTo(shortIDView.snp.top)
       make.centerX.equalTo(snp.centerX)
     }
-    titleView.font = NSFont.systemFont(ofSize: 14)
+    titleView.isEditable = false
+    titleView.isBezeled = false
     titleView.backgroundColor = .clear
+    titleView.font = NSFont.systemFont(ofSize: 14)
     titleView.alignment = .center
   }
   
@@ -76,8 +78,10 @@ class JiraCurrentTaskInfoView: NSView {
       make.bottom.equalTo(loggedTimeView.snp.top)
       make.centerX.equalTo(snp.centerX)
     }
-    shortIDView.font = NSFont.systemFont(ofSize: 13)
+    shortIDView.isEditable = false
+    shortIDView.isBezeled = false
     shortIDView.backgroundColor = .clear
+    shortIDView.font = NSFont.systemFont(ofSize: 13)
     shortIDView.alignment = .center
   }
   
@@ -89,8 +93,10 @@ class JiraCurrentTaskInfoView: NSView {
       make.bottom.equalTo(estimatedTimeView.snp.top)
       make.left.equalTo(snp.left)
     }
-    loggedTimeView.font = NSFont.systemFont(ofSize: 10)
+    loggedTimeView.isEditable = false
+    loggedTimeView.isBezeled = false
     loggedTimeView.backgroundColor = .clear
+    loggedTimeView.font = NSFont.systemFont(ofSize: 10)
   }
   
   func addEstimatedTime() {
@@ -100,13 +106,16 @@ class JiraCurrentTaskInfoView: NSView {
       make.bottom.equalTo(snp.bottom)
       make.left.equalTo(snp.left)
     }
-    estimatedTimeView.font = NSFont.systemFont(ofSize: 10)
+    estimatedTimeView.isEditable = false
+    estimatedTimeView.isBezeled = false
     estimatedTimeView.backgroundColor = .clear
+    estimatedTimeView.font = NSFont.systemFont(ofSize: 10)
   }
   
   func addSignoutButton() {
     signoutButton.target = self
     signoutButton.action = #selector(signoutButtonPressed)
+    signoutButton.bezelStyle = .regularSquare
     let parargaphStyle = NSMutableParagraphStyle()
     parargaphStyle.alignment = .center
     let title = NSAttributedString(string: "Signout", attributes: [NSForegroundColorAttributeName: NSColor.black,
@@ -116,13 +125,14 @@ class JiraCurrentTaskInfoView: NSView {
       make.bottom.equalTo(snp.bottom).inset(10)
       make.right.equalTo(snp.right).inset(10)
       make.height.equalTo(20)
-      make.width.equalTo(55)
+      make.width.equalTo(65)
     }
   }
   
   func addOpenInWebButton() {
     openInWebButton.target = self
     openInWebButton.action = #selector(openInWebButtonPressed)
+    openInWebButton.bezelStyle = .regularSquare
     let parargaphStyle = NSMutableParagraphStyle()
     parargaphStyle.alignment = .center
     let title = NSAttributedString(string: "Open in Web", attributes: [NSForegroundColorAttributeName: NSColor.black,
@@ -139,6 +149,7 @@ class JiraCurrentTaskInfoView: NSView {
   func addRefreshButton() {
     refreshButton.target = self
     refreshButton.action = #selector(refreshButtonPressed)
+    refreshButton.bezelStyle = .regularSquare
     let parargaphStyle = NSMutableParagraphStyle()
     parargaphStyle.alignment = .center
     let title = NSAttributedString(string: "Refresh", attributes: [NSForegroundColorAttributeName: NSColor.black,
@@ -148,7 +159,7 @@ class JiraCurrentTaskInfoView: NSView {
       make.bottom.equalTo(signoutButton.snp.top).inset(-10)
       make.right.equalTo(snp.right).inset(10)
       make.height.equalTo(20)
-      make.width.equalTo(55)
+      make.width.equalTo(65)
     }
     
   }

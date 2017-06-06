@@ -7,6 +7,8 @@
 //
 
 import Cocoa
+import Fabric
+import Crashlytics
 
 
 enum AppState {
@@ -16,25 +18,56 @@ enum AppState {
 
 class AppDelegate: NSObject, NSApplicationDelegate {
   
-  var appState: AppState?
-  var previousState: AppState?
   var credentialsStorage: CredentialsStorage?
   var jiraClient: JIRAClient?
   var statusItem = NSStatusBar.system().statusItem(withLength: 200)
-  var popover = NSPopover()
-
+  var currentTask: JiraTask?
+  var window: NSWindow?
+  
   func applicationDidFinishLaunching(_ aNotification: Notification) {
+    print("APP STATUS: applicationDidFinishLaunching(_ aNotification: Notification)")
+    UserDefaults.standard.register(defaults: ["NSApplicationCrashOnExceptions": true])
+    Fabric.with([Crashlytics.self])
+    
+    NSApp.activate(ignoringOtherApps: true)
     credentialsStorage = CredentialsStorage()
     jiraClient = JIRAClient(credentialsStorage: credentialsStorage!)
-    print("APP STATUS: applicationDidFinishLaunching(_ aNotification: Notification)")
+    if (credentialsStorage!.isLoggedIn()) {
+      try? jiraClient?.configure(with: credentialsStorage!)
+    }
     addStatusBarItem()
+    addMainMenu()
+    openFullApp()
+  }
+  
+  func addMainMenu() {
+    let menuBar = NSMenu(title: "Jira time tracker")
+    let menuBarItem = NSMenuItem()
+    //
+    let appMenu = NSMenu(title: "Smth")
+    let quitItem = NSMenuItem(title: "Quit", action: #selector(terminate), keyEquivalent: "q")
+    //
+    menuBar.addItem(menuBarItem)
+    NSApp.mainMenu = menuBar
+    //
+    appMenu.addItem(quitItem)
+    menuBarItem.submenu = appMenu
   }
   
   func addStatusBarItem() {
+    statusItem.button?.image = NSImage(named: "AppIcon")
+    statusItem.button?.imageScaling = .scaleProportionallyDown
+    statusItem.button?.imagePosition = .imageLeft
     statusItem.button?.title = "[No Active Tasks]"
     statusItem.button?.target = self
-    statusItem.button?.action = #selector(showPopover)
-    
+    statusItem.button?.action = #selector(showMenu)
+  }
+  
+  func openFullApp() {
+    if window == nil {
+      window = NSWindow(contentRect: NSRect(x: 500, y: 500, width: 200, height: 200), styleMask: [NSWindowStyleMask.titled, NSWindowStyleMask.closable], backing: NSBackingStoreType.buffered, defer: true)
+      window?.isReleasedWhenClosed = false
+    }
     var rootController: NSViewController? = nil
     if credentialsStorage!.isLoggedIn() {
       let boardController = BoardController()
@@ -43,22 +76,63 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     } else {
       rootController = LoginViewController()
     }
-    popover.contentViewController = rootController
+    if let contentController = window?.contentViewController {
+      if contentController.className != rootController?.className {
+        window?.contentViewController = rootController
+      }
+    } else {
+      window?.contentViewController = rootController
+    }
+    window?.setIsVisible(true)
+    window?.makeKeyAndOrderFront(self)
+    
   }
   
-  func updateTitle(with task: JiraTask) {
+  func terminate() {
+    NSApp.terminate(self)
+  }
+  
+  func askAQuestion() {
+    Helper.askAQuestion()
+  }
+  
+  func updateStatus(with task: JiraTask) {
     statusItem.button?.title = "\(convertToHumanReadable(time: task.currentSessionLoggedTime!)) [\(task.shortID!)]"
   }
   
-  func showPopover() {
-//    if previousState == .inactive && appState == .active {
-//      return
-//    }
-    if popover.isShown {
-      popover.performClose(nil)
-    } else {
-      popover.show(relativeTo: (statusItem.button?.bounds)!, of: statusItem.button!, preferredEdge: .minY)
+  func showMenu() {
+    let mainMenu = NSMenu(title: "Jira Time Tracker")
+    let showMainWindowItem = NSMenuItem(title: "Show app", action: #selector(openFullApp), keyEquivalent: "")
+    let resumePauseItem = NSMenuItem(title: "Resume / Pause", action: #selector(onResumePauseClicked), keyEquivalent: "")
+    let endItem = NSMenuItem(title: "Log work", action: #selector(onEndWorklogClicked), keyEquivalent: "")
+    let quitItem = NSMenuItem(title: "Quit Time Tracker", action: #selector(terminate), keyEquivalent: "q")
+    let askItem = NSMenuItem(title: "Ask a Question", action: #selector(askAQuestion), keyEquivalent: "")
+    mainMenu.addItem(showMainWindowItem)
+    mainMenu.addItem(resumePauseItem)
+    mainMenu.addItem(endItem)
+    mainMenu.addItem(askItem)
+    mainMenu.addItem(quitItem)
+    statusItem.popUpMenu(mainMenu)
+  }
+  
+/// MARK: Resume / pause from menu logic
+  
+  func onResumePauseClicked() {
+    guard let _ = Worklog.shared.currentActiveTask else {
+      return
     }
+    if (Worklog.shared.isTimerValid()) {
+      Worklog.shared.pauseWorklog()
+    } else {
+      Worklog.shared.startWorklog()
+    }
+  }
+  
+  func onEndWorklogClicked() {
+    guard let _ = Worklog.shared.currentActiveTask else {
+      return
+    }
+    Worklog.shared.stopWorklog()
   }
   
 /// MARK: login
@@ -66,7 +140,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
   func logout() {
     credentialsStorage?.removeCredentials()
     credentialsStorage?.clearServerURL()
-    popover.contentViewController = LoginViewController()
+    UserDefaults.resetStandardUserDefaults()
+    window?.contentViewController = LoginViewController()
     statusItem.button?.title = "[No Active Tasks]"
   }
   
@@ -75,9 +150,17 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     let credentials = "\(username):\(password)".data(using: .utf8)?.base64EncodedString()
     credentialsStorage?.setCredentials(base64Encoded: credentials!)
     //
+    do {
+      try jiraClient?.configure(with: credentialsStorage!)
+    } catch  {
+      let appDelegate = NSApp.delegate as? AppDelegate
+      appDelegate?.logout()
+      return
+    }
+    //
     let boardController = BoardController()
     boardController.jiraClient = jiraClient
-    popover.contentViewController = boardController
+    window?.contentViewController = boardController
   }
   
   /// MARK: 
@@ -108,8 +191,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
   
   func applicationDidBecomeActive(_ notification: Notification) {
     print("APP STATUS: applicationDidBecomeActive(_ notification: Notification)")
-    previousState = appState
-    appState = .active
   }
   
   func applicationWillResignActive(_ notification: Notification) {
@@ -118,16 +199,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
   
   func applicationDidResignActive(_ notification: Notification) {
     print("APP STATUS: applicationDidResignActive(_ notification: Notification)")
-    previousState = appState
-    appState = .inactive
-  }
-  
-  func applicationWillUpdate(_ notification: Notification) {
-//    print("APP STATUS: applicationWillUpdate(_ notification: Notification)")
-  }
-  
-  func applicationDidUpdate(_ notification: Notification) {
-//    print("APP STATUS: applicationDidUpdate(_ notification: Notification)")
   }
   
   func applicationWillTerminate(_ notification: Notification) {

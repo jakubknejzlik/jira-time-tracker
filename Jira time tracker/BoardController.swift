@@ -53,7 +53,9 @@ class BoardController : NSViewController {
   }
   
   func setupViews() {
-    view = CustomPopoverBackground()
+    view = NSView()
+    view.wantsLayer = true
+    view.layer?.backgroundColor = Colors.lightBlueColor().cgColor
     view.snp.makeConstraints { make in
       make.width.equalTo(BoardController.kViewWidth)
       make.height.equalTo(BoardController.kViewHeight)
@@ -104,7 +106,9 @@ class BoardController : NSViewController {
     let column = NSTableColumn(identifier: "Column1")
     column.headerCell.backgroundColor = Colors.darkBlueColor()
     column.headerCell.drawsBackground = true
-    column.title = "All your opened tasks"
+    column.headerCell.textColor = Colors.whiteColor()
+    let columnTitle = NSAttributedString(string: "All your opened tasks", attributes: [NSForegroundColorAttributeName: Colors.whiteColor()])
+    column.headerCell.attributedStringValue = columnTitle
     tasksTableView.delegate = self
     tasksTableView.dataSource = self
     tasksTableView.addTableColumn(column)
@@ -137,8 +141,18 @@ extension BoardController: NSTableViewDataSource, NSTableViewDelegate {
   
   func tableView(_ tableView: NSTableView, shouldSelectRow row: Int) -> Bool {
     let task = (tasks?[row])!
+    if (Worklog.shared.isAnyTaskInProgress()) {
+      print("Some task is already in progress. Selected new task.")
+      if (!Helper.showCancelOKAlert(withTitle: "Some task is already in progress. Progress for current task will be cancelled")) {
+        return false
+      }
+    }
+    Worklog.shared.invalidateTimer()
+    Worklog.shared.currentActiveTask = task
     shortTaskInfo.update(with: task)
     logPanel.update(with: task)
+    let appDelegate = NSApp.delegate as! AppDelegate
+    appDelegate.updateStatus(with: task)
     return true
   }
   
@@ -154,9 +168,11 @@ extension BoardController: LogPanelDelegate {
   func logDidEnd(panel: LogPanel) {
     let task = panel.task!
     jiraClient?.logWork(task.currentSessionLoggedTime!, task: task) {
+      Helper.showOKAlert(withTitle: "Successfully logged")
+      self.logPanel.counter = 0
       task.currentSessionLoggedTime = 0
       let appDelegate = NSApp.delegate as! AppDelegate
-      appDelegate.updateTitle(with: task)
+      appDelegate.updateStatus(with: task)
     }
   }
   
